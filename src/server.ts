@@ -8,7 +8,7 @@ dotenvConfig()
 
 // Create Express app
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = parseInt(process.env.PORT || '3000', 10)
 
 // Health check endpoint for Render
 app.get('/health', (_, res) => {
@@ -92,8 +92,8 @@ const start = async () => {
   })
 
   // Start server
-  app.listen(PORT, () => {
-    payload.logger.info(`Server running on http://localhost:${PORT}`)
+  app.listen(PORT, '0.0.0.0', () => {
+    payload.logger.info(`Server running on http://0.0.0.0:${PORT}`)
   })
 }
 
