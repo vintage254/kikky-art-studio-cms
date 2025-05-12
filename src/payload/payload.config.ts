@@ -125,10 +125,14 @@ export default buildConfig({
         },
   }),
   // database-adapter-config-end
-  express: (app: Express) => {
-    app.get('/health', (_, res) => {
-      res.status(200).send('OK')
-    })
+  express: {
+    middleware: [
+      (app: Express) => {
+        app.get('/health', (_, res) => {
+          res.status(200).send('OK')
+        })
+      }
+    ]
   },
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL,
   collections: [Pages, Products, Orders, Media, Categories, Users, Payments],
