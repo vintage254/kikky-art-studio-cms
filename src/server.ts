@@ -15,6 +15,9 @@ app.get('/health', (_, res) => {
   res.status(200).send('OK')
 })
 
+// Serve static files from public directory
+app.use(express.static(path.resolve(__dirname, '../public')))
+
 // Serve media files
 app.use('/media', express.static(path.resolve(__dirname, '../media')))
 
@@ -57,28 +60,28 @@ process.on('uncaughtException', (error: any) => {
 // Initialize Payload
 const start = async () => {
   // Initialize Payload
-  await payload.init({
-    secret: process.env.PAYLOAD_SECRET || '',
-    express: app,
+    await payload.init({
+      secret: process.env.PAYLOAD_SECRET || '',
+      express: app,
     onInit: async () => {
-      payload.logger.info(`Payload Admin URL: ${payload.getAdminURL()}`)
-      // Reset error counter on successful initialization
+        payload.logger.info(`Payload Admin URL: ${payload.getAdminURL()}`)
+        // Reset error counter on successful initialization
       consecutiveDbErrors = 0
-    },
-  })
+      },
+    })
 
   // Setup a database keep-alive to prevent database from suspending
   const KEEP_ALIVE_INTERVAL = 4 * 60 * 1000 // 4 minutes
-  setInterval(async () => {
-    try {
-      // Use a simple collection count operation to ping the database
-      await payload.find({
-        collection: 'users',
-        limit: 1,
-        depth: 0 // Don't populate relations to keep it lightweight
+    setInterval(async () => {
+      try {
+        // Use a simple collection count operation to ping the database
+        await payload.find({
+          collection: 'users',
+          limit: 1,
+          depth: 0 // Don't populate relations to keep it lightweight
       })
-      
-      if (process.env.NODE_ENV !== 'production') {
+        
+        if (process.env.NODE_ENV !== 'production') {
         payload.logger.info('Database keep-alive ping successful')
       }
     } catch (error) {
